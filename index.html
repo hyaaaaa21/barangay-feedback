@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Complaint & Feedback System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">
+            <i class="fa-regular fa-comments"></i>
+            <h2 id="main-title">Barangay Complaint & Feedback System</h2>
+        </div>
+        <p id="sub-title">Magsumite ng inyong reklamo o suggestion para sa ikabubuti ng ating barangay</p>
+
+        <div class="top-nav">
+            <button class="nav-tab active" id="btn-user-view" onclick="showView('user-view')">
+                <i class="fa-solid fa-user"></i> <span id="txt-user-view">User View</span>
+            </button>
+            <button class="nav-tab" id="btn-admin-view" onclick="showView('admin-view')">
+                <i class="fa-solid fa-shield-halved"></i> <span id="txt-admin-view">Admin View</span>
+            </button>
+            <button class="nav-tab" id="lang-toggle-btn" onclick="toggleLanguage()">
+                <i class="fa-solid fa-language"></i> <span id="lang-label">English</span>
+            </button>
+            <button class="nav-tab logout-btn" id="nav-logout" onclick="logoutAdmin()" style="display: none; color: #e11d48; border-color: #fca5a5;">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <section id="user-view" class="view-section">
+            <div class="two-column">
+                <div class="form-card">
+                    <h3 id="form-header">Magsumite ng Reklamo o Suggestion</h3>
+                    <form id="feedbackForm">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="anonymous">
+                            <label for="anonymous" id="lbl-anon">Isumite nang Anonymous</label>
+                        </div>
+                        
+                        <label id="lbl-name">Pangalan (Optional)</label>
+                        <input type="text" id="userName" placeholder="Ipasok ang inyong pangalan">
+
+                        <label id="lbl-category">Kategorya *</label>
+                        <select id="category">
+                            <option value="Basura">Basura</option>
+                            <option value="Ilaw">Ilaw</option>
+                            <option value="Kalsada">Kalsada</option>
+                            <option value="Others">Others / Iba pa</option>
+                        </select>
+
+                        <label id="lbl-message">Mensahe *</label>
+                        <textarea id="message" placeholder="Ilarawan ang inyong reklamo o suggestion..." required></textarea>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fa-solid fa-paper-plane"></i> <span id="btn-text">Isumite ang Reklamo</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="status-feed">
+                    <h3 id="feed-title">Mga Naitala na Reklamo</h3>
+                    <p id="feed-sub">Tingnan ang status ng mga reklamo</p>
+                    <div id="user-feed-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin-view" class="view-section" style="display: none;">
+            <div class="admin-card">
+                <div class="admin-header">
+                    <h3 id="admin-title-text">Admin Dashboard</h3>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-box total"><label id="lbl-stat-total">Total</label><span id="stat-total">0</span></div>
+                    <div class="stat-box pending"><label id="lbl-stat-pending">Pending</label><span id="stat-pending">0</span></div>
+                    <div class="stat-box resolved"><label id="lbl-stat-resolved">Resolved</label><span id="stat-resolved">0</span></div>
+                </div>
+                <hr class="divider">
+                <div id="admin-feed-container"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3 id="login-header">Admin Access</h3>
+            <input type="password" id="adminPassword" placeholder="Enter Password">
+            <div class="modal-buttons">
+                <button onclick="checkLogin()" style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Login</button>
+                <button onclick="closeLogin()" class="cancel-btn" style="background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-left: 10px;">Cancel</button>
+            </div>
+            <p id="loginError" style="color:red; display:none; margin-top:10px;">Incorrect Password!</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
