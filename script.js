@@ -1,7 +1,18 @@
-// Load reports from LocalStorage or start with empty array
-let reports = JSON.parse(localStorage.getItem('barangay_reports')) || [];
 let isAdminLoggedIn = false;
 let currentLang = 'tl';
+let reports = [];
+
+// Connect to Firebase References shared by index.html
+const { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } = window.firestore;
+const db = window.db;
+const reportsRef = collection(db, "reports");
+
+// Real-time Database Listener
+const q = query(reportsRef, orderBy("timestamp", "desc"));
+onSnapshot(q, (snapshot) => {
+    reports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    updateUI();
+});
 
 const translations = {
     'en': {
@@ -52,10 +63,6 @@ const translations = {
     }
 };
 
-function saveToLocal() {
-    localStorage.setItem('barangay_reports', JSON.stringify(reports));
-}
-
 function toggleLanguage() {
     currentLang = (currentLang === 'en') ? 'tl' : 'en';
     const t = translations[currentLang];
@@ -105,11 +112,11 @@ function updateUI() {
                 <p style="margin: 15px 0;">${r.message}</p>
                 ${isAdminLoggedIn ? `
                     <div style="display:flex; gap:10px;">
-                        <button onclick="toggleStatus(${r.id})" class="submit-btn" style="margin-top:5px; background:${isP ? '#16a34a' : '#f59e0b'}">
+                        <button onclick="toggleStatus('${r.id}', '${r.status}')" class="submit-btn" style="margin-top:5px; background:${isP ? '#16a34a' : '#f59e0b'}">
                             <i class="fa-solid ${isP ? 'fa-check' : 'fa-arrow-rotate-left'}"></i> 
                             ${isP ? t.markResolved : t.markPending}
                         </button>
-                        <button onclick="deleteReport(${r.id})" class="submit-btn" style="margin-top:5px; background:#e11d48; width: 50px;">
+                        <button onclick="deleteReport('${r.id}')" class="submit-btn" style="margin-top:5px; background:#e11d48; width: 50px;">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>` : ''}
@@ -125,18 +132,14 @@ function updateUI() {
     document.getElementById('nav-logout').style.display = isAdminLoggedIn ? 'flex' : 'none';
 }
 
-function toggleStatus(id) {
-    const r = reports.find(report => report.id === id);
-    r.status = (r.status === 'pending') ? 'resolved' : 'pending';
-    saveToLocal();
-    updateUI();
+async function toggleStatus(id, currentStatus) {
+    const newStatus = (currentStatus === 'pending') ? 'resolved' : 'pending';
+    await updateDoc(doc(db, "reports", id), { status: newStatus });
 }
 
-function deleteReport(id) {
+async function deleteReport(id) {
     if(confirm("Sigurado ka ba na gusto mong burahin ito?")) {
-        reports = reports.filter(r => r.id !== id);
-        saveToLocal();
-        updateUI();
+        await deleteDoc(doc(db, "reports", id));
     }
 }
 
@@ -165,21 +168,18 @@ function checkLogin() {
 function closeLogin() { document.getElementById('loginModal').style.display = 'none'; }
 function logoutAdmin() { isAdminLoggedIn = false; showView('user-view'); }
 
-document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const isAnon = document.getElementById('anonymous').checked;
-    reports.unshift({
-        id: Date.now(),
+    
+    await addDoc(reportsRef, {
         name: isAnon ? "Anonymous" : (document.getElementById('userName').value || "Anonymous"),
         category: document.getElementById('category').value,
         message: document.getElementById('message').value,
         status: 'pending',
-        date: new Date().toLocaleString()
+        date: new Date().toLocaleString(),
+        timestamp: Date.now()
     });
-    saveToLocal();
-    updateUI();
+
     this.reset();
 });
-
-// Load the UI with saved data on startup
-window.onload = updateUI;
