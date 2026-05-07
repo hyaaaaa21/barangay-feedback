@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barangay Complaint & Feedback System</title>
+    <title>Barangay Feedback System</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -12,7 +12,7 @@
     <div class="header">
         <div class="logo">
             <i class="fa-regular fa-comments"></i>
-            <h2 id="main-title">Barangay Complaint & Feedback System</h2>
+            <h2 id="main-title">Sistema ng Reklamo sa Barangay</h2>
         </div>
         <p id="sub-title">Magsumite ng inyong reklamo o suggestion para sa ikabubuti ng ating barangay</p>
 
@@ -26,7 +26,7 @@
             <button class="nav-tab" id="lang-toggle-btn" onclick="toggleLanguage()">
                 <i class="fa-solid fa-language"></i> <span id="lang-label">English</span>
             </button>
-            <button class="nav-tab logout-btn" id="nav-logout" onclick="logoutAdmin()" style="display: none; color: #e11d48; border-color: #fca5a5;">
+            <button class="nav-tab logout-btn" id="nav-logout" onclick="logoutAdmin()" style="display: none;">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
         </div>
@@ -36,7 +36,7 @@
         <section id="user-view" class="view-section">
             <div class="two-column">
                 <div class="form-card">
-                    <h3 id="form-header">Magsumite ng Reklamo o Suggestion</h3>
+                    <h3 id="form-header">Magsumite ng Reklamo</h3>
                     <form id="feedbackForm">
                         <div class="checkbox-group">
                             <input type="checkbox" id="anonymous">
@@ -44,7 +44,7 @@
                         </div>
                         
                         <label id="lbl-name">Pangalan (Optional)</label>
-                        <input type="text" id="userName" placeholder="Ipasok ang inyong pangalan">
+                        <input type="text" id="userName" placeholder="Ipasok ang pangalan">
 
                         <label id="lbl-category">Kategorya *</label>
                         <select id="category">
@@ -55,7 +55,7 @@
                         </select>
 
                         <label id="lbl-message">Mensahe *</label>
-                        <textarea id="message" placeholder="Ilarawan ang inyong reklamo o suggestion..." required></textarea>
+                        <textarea id="message" placeholder="Ilarawan dito..." required></textarea>
                         
                         <button type="submit" class="submit-btn">
                             <i class="fa-solid fa-paper-plane"></i> <span id="btn-text">Isumite ang Reklamo</span>
@@ -64,8 +64,8 @@
                 </div>
 
                 <div class="status-feed">
-                    <h3 id="feed-title">Mga Naitala na Reklamo</h3>
-                    <p id="feed-sub">Tingnan ang status ng mga reklamo</p>
+                    <h3 id="feed-title">Mga Reklamo</h3>
+                    <p id="feed-sub">Status ng mga reklamo</p>
                     <div id="user-feed-container"></div>
                 </div>
             </div>
@@ -73,15 +73,12 @@
 
         <section id="admin-view" class="view-section" style="display: none;">
             <div class="admin-card">
-                <div class="admin-header">
-                    <h3 id="admin-title-text">Admin Dashboard</h3>
-                </div>
+                <h3 id="admin-title-text">Admin Dashboard</h3>
                 <div class="stats-container">
-                    <div class="stat-box total"><label id="lbl-stat-total">Total</label><span id="stat-total">0</span></div>
+                    <div class="stat-box total"><label id="lbl-stat-total">Kabuuan</label><span id="stat-total">0</span></div>
                     <div class="stat-box pending"><label id="lbl-stat-pending">Pending</label><span id="stat-pending">0</span></div>
                     <div class="stat-box resolved"><label id="lbl-stat-resolved">Resolved</label><span id="stat-resolved">0</span></div>
                 </div>
-                <hr class="divider">
                 <div id="admin-feed-container"></div>
             </div>
         </section>
@@ -89,13 +86,11 @@
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <h3 id="login-header">Admin Access</h3>
+            <h3>Admin Access</h3>
             <input type="password" id="adminPassword" placeholder="Enter Password">
-            <div class="modal-buttons">
-                <button onclick="checkLogin()" style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Login</button>
-                <button onclick="closeLogin()" class="cancel-btn" style="background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-left: 10px;">Cancel</button>
-            </div>
-            <p id="loginError" style="color:red; display:none; margin-top:10px;">Incorrect Password!</p>
+            <button onclick="checkLogin()" class="submit-btn">Login</button>
+            <button onclick="closeLogin()" style="background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Cancel</button>
+            <p id="loginError" style="color:red; display:none;">Incorrect Password!</p>
         </div>
     </div>
 
@@ -104,9 +99,8 @@
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } 
         from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Your exact credentials from your screenshot
         const firebaseConfig = {
-            apiKey: "AIzaSyBGwPMrH4DcRc06P23e-g5Jz06HDGhhie8",
+            apiKey: "AIzaSyBGwPMRh4DcRc06P23e-g5Jz06HDGhhie8",
             authDomain: "barangay-feedback-system.firebaseapp.com",
             projectId: "barangay-feedback-system",
             storageBucket: "barangay-feedback-system.firebasestorage.app",
@@ -117,11 +111,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Share Firebase with script.js
         window.db = db;
         window.firestore = { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy };
     </script>
-
     <script src="script.js"></script>
 </body>
 </html>
