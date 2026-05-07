@@ -1,49 +1,27 @@
-:root {
-    --primary-blue: #2563eb;
-    --bg-light: #f1f5f9;
-    --white: #ffffff;
-    --pending: #f59e0b;
-    --resolved: #10b981;
-}
+:root { --blue: #2563eb; --bg: #f8fafc; }
+body { font-family: sans-serif; background: var(--bg); margin: 0; }
+.header { text-align: center; padding: 20px; background: white; border-bottom: 1px solid #ddd; }
+.top-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+.nav-tab { padding: 8px 15px; border-radius: 8px; border: 1px solid #ccc; background: white; cursor: pointer; }
+.nav-tab.active { background: var(--blue); color: white; }
+.container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+.two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-card, .status-feed, .admin-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
 
-body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; color: #1e293b; line-height: 1.6; }
+/* CHECKBOX FIX */
+.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.checkbox-group input[type="checkbox"] { width: 18px !important; height: 18px !important; margin: 0 !important; cursor: pointer; }
+.checkbox-group label { margin: 0; font-weight: bold; cursor: pointer; }
 
-.header { text-align: center; padding: 40px 20px; }
-.logo { display: flex; justify-content: center; align-items: center; gap: 12px; color: var(--primary-blue); margin-bottom: 5px; }
-.top-nav { display: flex; justify-content: center; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
-
-.nav-tab { background: white; border: 1px solid #e2e8f0; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-.nav-tab.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
-.nav-tab.logout-btn:hover { background: #fff1f2; border-color: #e11d48; }
-
-.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-.two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-
-.form-card, .status-feed, .admin-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
-
-label { display: block; font-weight: 600; margin-bottom: 8px; margin-top: 10px; }
-input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; font-family: inherit; }
-
-.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-.checkbox-group input { width: auto; margin: 0; }
-.checkbox-group label { margin: 0; cursor: pointer; }
-
-.submit-btn { width: 100%; background: var(--primary-blue); color: white; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-
-.stats-container { display: flex; gap: 20px; margin: 25px 0; }
-.stat-box { flex: 1; padding: 20px; border-radius: 15px; text-align: center; }
-.stat-box.total { background: #eff6ff; color: #1d4ed8; }
-.stat-box.pending { background: #fffbeb; color: #b45309; }
-.stat-box.resolved { background: #f0fdf4; color: #15803d; }
-.stat-box span { font-size: 2rem; font-weight: 800; display: block; }
-
-.report-card { background: white; border: 1px solid #f1f5f9; border-left: 6px solid #cbd5e1; padding: 20px; border-radius: 12px; margin-bottom: 15px; position: relative; }
-.border-pending { border-left-color: var(--pending); }
-.border-resolved { border-left-color: var(--resolved); }
-
-.tag-category { background: #dbeafe; color: #1e40af; padding: 2px 10px; border-radius: 6px; font-size: 0.75rem; margin-left: 8px; vertical-align: middle; }
-
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-.modal-content { background: white; margin: 10% auto; padding: 30px; width: 300px; border-radius: 20px; text-align: center; }
-
+.submit-btn { width: 100%; background: var(--blue); color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.stats-container { display: flex; gap: 10px; margin-bottom: 20px; }
+.stat-box { flex: 1; padding: 10px; border-radius: 8px; text-align: center; background: #eee; }
+.stat-box span { font-size: 1.2rem; font-weight: bold; display: block; }
+.report-card { border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #ccc; }
+.border-pending { border-left-color: orange; }
+.border-resolved { border-left-color: green; }
+.tag-category { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+.modal-content { background: white; width: 250px; margin: 100px auto; padding: 20px; border-radius: 10px; text-align: center; }
 @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } }
