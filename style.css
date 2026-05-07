@@ -1,27 +1,27 @@
 :root { --blue: #2563eb; --bg: #f8fafc; }
-body { font-family: sans-serif; background: var(--bg); margin: 0; }
-.header { text-align: center; padding: 20px; background: white; border-bottom: 1px solid #ddd; }
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+.header { text-align: center; padding: 25px; background: white; border-bottom: 1px solid #ddd; }
 .top-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
-.nav-tab { padding: 8px 15px; border-radius: 8px; border: 1px solid #ccc; background: white; cursor: pointer; }
-.nav-tab.active { background: var(--blue); color: white; }
+.nav-tab { padding: 10px 20px; border-radius: 8px; border: 1px solid #ccc; background: white; cursor: pointer; font-weight: 600; }
+.nav-tab.active { background: var(--blue); color: white; border-color: var(--blue); }
 .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
-.two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.form-card, .status-feed, .admin-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+.two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.form-card, .status-feed, .admin-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
 
-/* CHECKBOX FIX */
-.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.checkbox-group input[type="checkbox"] { width: 18px !important; height: 18px !important; margin: 0 !important; cursor: pointer; }
+/* FIXED CHECKBOX GROUP */
+.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.checkbox-group input[type="checkbox"] { width: 20px !important; height: 20px !important; margin: 0 !important; cursor: pointer; }
 .checkbox-group label { margin: 0; font-weight: bold; cursor: pointer; }
 
-.submit-btn { width: 100%; background: var(--blue); color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.stats-container { display: flex; gap: 10px; margin-bottom: 20px; }
-.stat-box { flex: 1; padding: 10px; border-radius: 8px; text-align: center; background: #eee; }
-.stat-box span { font-size: 1.2rem; font-weight: bold; display: block; }
-.report-card { border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #ccc; }
-.border-pending { border-left-color: orange; }
-.border-resolved { border-left-color: green; }
-.tag-category { background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-.modal-content { background: white; width: 250px; margin: 100px auto; padding: 20px; border-radius: 10px; text-align: center; }
+.submit-btn { width: 100%; background: var(--blue); color: white; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.stats-container { display: flex; gap: 15px; margin-bottom: 20px; }
+.stat-box { flex: 1; padding: 15px; border-radius: 10px; text-align: center; background: #f1f5f9; }
+.stat-box span { font-size: 1.5rem; font-weight: bold; display: block; }
+.report-card { border: 1px solid #eee; padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 6px solid #ccc; }
+.border-pending { border-left-color: #f59e0b; }
+.border-resolved { border-left-color: #10b981; }
+.tag-category { background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; }
+.modal-content { background: white; width: 300px; margin: 100px auto; padding: 30px; border-radius: 15px; text-align: center; }
 @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } }
