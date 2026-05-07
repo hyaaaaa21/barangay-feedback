@@ -2,71 +2,103 @@ let isAdminLoggedIn = false;
 let currentLang = 'tl';
 let reports = [];
 
-// Connect to Firebase References shared by index.html
-const { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } = window.firestore;
-const db = window.db;
-const reportsRef = collection(db, "reports");
-
-// Real-time Database Listener
-const q = query(reportsRef, orderBy("timestamp", "desc"));
-onSnapshot(q, (snapshot) => {
-    reports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    updateUI();
-});
-
 const translations = {
     'en': {
-        mainTitle: "Barangay Complaint & Feedback System",
-        subTitle: "Submit your complaint or suggestion for the improvement of our barangay",
-        userView: "User View",
-        adminView: "Admin View",
-        langLabel: "English",
-        formHeader: "Submit Report or Suggestion",
-        anonLabel: "Submit as Anonymous",
-        nameLabel: "Name (Optional)",
-        namePlaceholder: "Enter your name",
-        catLabel: "Category *",
-        msgLabel: "Message *",
-        msgPlaceholder: "Describe your report or suggestion...",
-        btnSubmit: "Submit Report",
-        feedTitle: "Recorded Reports",
-        feedSub: "View the status of reports",
-        adminTitle: "Admin Dashboard",
-        statTotal: "Total",
-        statPending: "Pending",
-        statResolved: "Resolved",
-        markResolved: "Mark as Resolved",
-        markPending: "Mark as Pending"
+        mainTitle: "Barangay Feedback System", subTitle: "Submit your suggestion for the barangay",
+        userView: "User View", adminView: "Admin View", langLabel: "English",
+        formHeader: "Submit Report", anonLabel: "Submit as Anonymous",
+        nameLabel: "Name (Optional)", namePlaceholder: "Enter your name",
+        catLabel: "Category *", msgLabel: "Message *", msgPlaceholder: "Describe your report...",
+        btnSubmit: "Submit Report", feedTitle: "Recorded Reports", feedSub: "Status list",
+        adminTitle: "Admin Dashboard", statTotal: "Total", statPending: "Pending", 
+        statResolved: "Resolved", markResolved: "Resolve", markPending: "Pending"
     },
     'tl': {
-        mainTitle: "Sistema ng Reklamo at Feedback sa Barangay",
-        subTitle: "Magsumite ng inyong reklamo o suggestion para sa ikabubuti ng ating barangay",
-        userView: "User View",
-        adminView: "Admin View",
-        langLabel: "Tagalog",
-        formHeader: "Magsumite ng Reklamo o Suggestion",
-        anonLabel: "Isumite nang Anonymous",
-        nameLabel: "Pangalan (Optional)",
-        namePlaceholder: "Ipasok ang inyong pangalan",
-        catLabel: "Kategorya *",
-        msgLabel: "Mensahe *",
-        msgPlaceholder: "Ilarawan ang inyong reklamo o suggestion...",
-        btnSubmit: "Isumite ang Reklamo",
-        feedTitle: "Mga Naitala na Reklamo",
-        feedSub: "Tingnan ang status ng mga reklamo",
-        adminTitle: "Admin Dashboard",
-        statTotal: "Kabuuan",
-        statPending: "Pending",
-        statResolved: "Resolved",
-        markResolved: "Markahan bilang Resolved",
-        markPending: "Markahan bilang Pending"
+        mainTitle: "Sistema ng Reklamo sa Barangay", subTitle: "Magsumite ng inyong reklamo o suggestion",
+        userView: "User View", adminView: "Admin View", langLabel: "Tagalog",
+        formHeader: "Magsumite ng Reklamo", anonLabel: "Isumite nang Anonymous",
+        nameLabel: "Pangalan (Optional)", namePlaceholder: "Ipasok ang pangalan",
+        catLabel: "Kategorya *", msgLabel: "Mensahe *", msgPlaceholder: "Ilarawan dito...",
+        btnSubmit: "Isumite ang Reklamo", feedTitle: "Mga Reklamo", feedSub: "Status ng mga reklamo",
+        adminTitle: "Admin Dashboard", statTotal: "Kabuuan", statPending: "Pending", 
+        statResolved: "Resolved", markResolved: "Resolved", markPending: "Pending"
     }
 };
+
+const checkFirebase = setInterval(() => {
+    if (window.db && window.firestore) {
+        clearInterval(checkFirebase);
+        startListening();
+    }
+}, 100);
+
+function startListening() {
+    const { collection, onSnapshot, query, orderBy } = window.firestore;
+    const q = query(collection(window.db, "reports"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+        reports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        updateUI();
+    });
+}
+
+function updateUI() {
+    const t = translations[currentLang];
+    const userCont = document.getElementById('user-feed-container');
+    const adminCont = document.getElementById('admin-feed-container');
+    userCont.innerHTML = ''; adminCont.innerHTML = '';
+    let p = 0, r = 0;
+
+    reports.forEach(rep => {
+        const isP = rep.status === 'pending';
+        isP ? p++ : r++;
+        const html = `
+            <div class="report-card border-${rep.status}">
+                <strong>${rep.name}</strong> <span class="tag-category">${rep.category}</span>
+                <br><small>${rep.date}</small>
+                <p>${rep.message}</p>
+                ${isAdminLoggedIn ? `
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button onclick="toggleStatus('${rep.id}', '${rep.status}')" class="submit-btn" style="background:${isP ? '#16a34a' : '#f59e0b'}; padding:8px;">${isP ? t.markResolved : t.markPending}</button>
+                        <button onclick="deleteReport('${rep.id}')" class="submit-btn" style="background:#e11d48; width:45px; padding:8px;"><i class="fa-solid fa-trash"></i></button>
+                    </div>` : ''}
+            </div>`;
+        userCont.innerHTML += html; adminCont.innerHTML += html;
+    });
+
+    document.getElementById('stat-total').innerText = reports.length;
+    document.getElementById('stat-pending').innerText = p;
+    document.getElementById('stat-resolved').innerText = r;
+}
+
+document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const isAnon = document.getElementById('anonymous').checked;
+    const nameVal = document.getElementById('userName').value.trim();
+    const finalName = (isAnon || nameVal === "") ? "Anonymous" : nameVal;
+
+    await window.firestore.addDoc(window.firestore.collection(window.db, "reports"), {
+        name: finalName,
+        category: document.getElementById('category').value,
+        message: document.getElementById('message').value,
+        status: 'pending',
+        date: new Date().toLocaleString(),
+        timestamp: Date.now()
+    });
+    this.reset();
+});
+
+async function toggleStatus(id, currentStatus) {
+    const ns = (currentStatus === 'pending') ? 'resolved' : 'pending';
+    await window.firestore.updateDoc(window.firestore.doc(window.db, "reports", id), { status: ns });
+}
+
+async function deleteReport(id) {
+    if(confirm("Delete?")) await window.firestore.deleteDoc(window.firestore.doc(window.db, "reports", id));
+}
 
 function toggleLanguage() {
     currentLang = (currentLang === 'en') ? 'tl' : 'en';
     const t = translations[currentLang];
-
     document.getElementById('main-title').innerText = t.mainTitle;
     document.getElementById('sub-title').innerText = t.subTitle;
     document.getElementById('txt-user-view').innerText = t.userView;
@@ -86,100 +118,25 @@ function toggleLanguage() {
     document.getElementById('lbl-stat-total').innerText = t.statTotal;
     document.getElementById('lbl-stat-pending').innerText = t.statPending;
     document.getElementById('lbl-stat-resolved').innerText = t.statResolved;
-    
     updateUI();
 }
 
-function updateUI() {
-    const t = translations[currentLang];
-    const userContainer = document.getElementById('user-feed-container');
-    const adminContainer = document.getElementById('admin-feed-container');
-    
-    userContainer.innerHTML = '';
-    adminContainer.innerHTML = '';
-
-    let pCount = 0;
-    let rCount = 0;
-
-    reports.forEach(r => {
-        const isP = r.status === 'pending';
-        if (isP) pCount++; else rCount++;
-
-        const cardHTML = `
-            <div class="report-card border-${r.status}">
-                <strong>${r.name}</strong> <span class="tag-category">${r.category}</span>
-                <br><small style="color: #64748b;">${r.date}</small>
-                <p style="margin: 15px 0;">${r.message}</p>
-                ${isAdminLoggedIn ? `
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="toggleStatus('${r.id}', '${r.status}')" class="submit-btn" style="margin-top:5px; background:${isP ? '#16a34a' : '#f59e0b'}">
-                            <i class="fa-solid ${isP ? 'fa-check' : 'fa-arrow-rotate-left'}"></i> 
-                            ${isP ? t.markResolved : t.markPending}
-                        </button>
-                        <button onclick="deleteReport('${r.id}')" class="submit-btn" style="margin-top:5px; background:#e11d48; width: 50px;">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>` : ''}
-            </div>`;
-        
-        userContainer.innerHTML += cardHTML;
-        adminContainer.innerHTML += cardHTML;
-    });
-
-    document.getElementById('stat-total').innerText = reports.length;
-    document.getElementById('stat-pending').innerText = pCount;
-    document.getElementById('stat-resolved').innerText = rCount;
-    document.getElementById('nav-logout').style.display = isAdminLoggedIn ? 'flex' : 'none';
-}
-
-async function toggleStatus(id, currentStatus) {
-    const newStatus = (currentStatus === 'pending') ? 'resolved' : 'pending';
-    await updateDoc(doc(db, "reports", id), { status: newStatus });
-}
-
-async function deleteReport(id) {
-    if(confirm("Sigurado ka ba na gusto mong burahin ito?")) {
-        await deleteDoc(doc(db, "reports", id));
-    }
-}
-
-function showView(viewId) {
-    if (viewId === 'admin-view' && !isAdminLoggedIn) {
-        document.getElementById('loginModal').style.display = 'block';
-    } else {
+function showView(v) {
+    if (v === 'admin-view' && !isAdminLoggedIn) { document.getElementById('loginModal').style.display = 'block'; }
+    else {
         document.querySelectorAll('.view-section').forEach(s => s.style.display = 'none');
-        document.getElementById(viewId).style.display = 'block';
+        document.getElementById(v).style.display = 'block';
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('btn-' + viewId).classList.add('active');
+        document.getElementById('btn-' + v).classList.add('active');
+        document.getElementById('nav-logout').style.display = isAdminLoggedIn ? 'flex' : 'none';
         updateUI();
     }
 }
 
 function checkLogin() {
     if (document.getElementById('adminPassword').value === "admin123") {
-        isAdminLoggedIn = true;
-        closeLogin();
-        showView('admin-view');
-    } else {
-        document.getElementById('loginError').style.display = 'block';
-    }
+        isAdminLoggedIn = true; closeLogin(); showView('admin-view');
+    } else { document.getElementById('loginError').style.display = 'block'; }
 }
-
 function closeLogin() { document.getElementById('loginModal').style.display = 'none'; }
 function logoutAdmin() { isAdminLoggedIn = false; showView('user-view'); }
-
-document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const isAnon = document.getElementById('anonymous').checked;
-    
-    await addDoc(reportsRef, {
-        name: isAnon ? "Anonymous" : (document.getElementById('userName').value || "Anonymous"),
-        category: document.getElementById('category').value,
-        message: document.getElementById('message').value,
-        status: 'pending',
-        date: new Date().toLocaleString(),
-        timestamp: Date.now()
-    });
-
-    this.reset();
-});
