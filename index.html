@@ -99,6 +99,29 @@
         </div>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } 
+        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // Your exact credentials from your screenshot
+        const firebaseConfig = {
+            apiKey: "AIzaSyBGwPMrH4DcRc06P23e-g5Jz06HDGhhie8",
+            authDomain: "barangay-feedback-system.firebaseapp.com",
+            projectId: "barangay-feedback-system",
+            storageBucket: "barangay-feedback-system.firebasestorage.app",
+            messagingSenderId: "310514963319",
+            appId: "1:310514963319:web:09ecb7df0a5f536c78c772"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Share Firebase with script.js
+        window.db = db;
+        window.firestore = { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy };
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>
