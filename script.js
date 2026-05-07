@@ -11,17 +11,17 @@ const translations = {
         catLabel: "Category *", msgLabel: "Message *", msgPlaceholder: "Describe your report...",
         btnSubmit: "Submit Report", feedTitle: "Recorded Reports", feedSub: "Status list",
         adminTitle: "Admin Dashboard", statTotal: "Total", statPending: "Pending", 
-        statResolved: "Resolved", markResolved: "Resolve", markPending: "Pending"
+        statResolved: "Resolved", markResolved: "Mark as Resolved", markPending: "Mark as Pending"
     },
     'tl': {
-        mainTitle: "Sistema ng Reklamo sa Barangay", subTitle: "Magsumite ng inyong reklamo o suggestion",
+        mainTitle: "Sistema ng Reklamo sa Barangay", subTitle: "Magsumite ng inyong reklamo o suggestion para sa ikabubuti ng ating barangay",
         userView: "User View", adminView: "Admin View", langLabel: "Tagalog",
         formHeader: "Magsumite ng Reklamo", anonLabel: "Isumite nang Anonymous",
         nameLabel: "Pangalan (Optional)", namePlaceholder: "Ipasok ang pangalan",
         catLabel: "Kategorya *", msgLabel: "Mensahe *", msgPlaceholder: "Ilarawan dito...",
         btnSubmit: "Isumite ang Reklamo", feedTitle: "Mga Reklamo", feedSub: "Status ng mga reklamo",
         adminTitle: "Admin Dashboard", statTotal: "Kabuuan", statPending: "Pending", 
-        statResolved: "Resolved", markResolved: "Resolved", markPending: "Pending"
+        statResolved: "Resolved", markResolved: "Markahan bilang Resolved", markPending: "Markahan bilang Pending"
     }
 };
 
@@ -54,7 +54,7 @@ function updateUI() {
         const html = `
             <div class="report-card border-${rep.status}">
                 <strong>${rep.name}</strong> <span class="tag-category">${rep.category}</span>
-                <br><small>${rep.date}</small>
+                <br><small style="color:gray;">${rep.date}</small>
                 <p>${rep.message}</p>
                 ${isAdminLoggedIn ? `
                     <div style="display:flex; gap:10px; margin-top:10px;">
@@ -93,7 +93,7 @@ async function toggleStatus(id, currentStatus) {
 }
 
 async function deleteReport(id) {
-    if(confirm("Delete?")) await window.firestore.deleteDoc(window.firestore.doc(window.db, "reports", id));
+    if(confirm("Delete this?")) await window.firestore.deleteDoc(window.firestore.doc(window.db, "reports", id));
 }
 
 function toggleLanguage() {
